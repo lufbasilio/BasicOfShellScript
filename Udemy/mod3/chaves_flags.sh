@@ -31,17 +31,33 @@ MENSAGEM_USO="
     --version   Mostra a versão do Script
 "
 VERSION="1.1"
+
+
+HELP=0
+ORDENA=0
+VER=0
+MAI=0
 # ------------------------------------------------------------------------ #
 
-case "${1}" in
-    -h)
-        echo "${MENSAGEM_USO}"              ;;
-    -o)
-        echo "${USUARIOS}" | sort           ;;
-    -v | --version)
-        echo "${VERSION}"                   ;;
-    -m)
-       echo "${USUARIOS}" | tr [a-z] [A-Z]  ;;
-    *) 
-        echo "${USUARIOS}"                  ;;  
-esac
+while test -n "$1" ; do
+    case "${1}" in
+        -h)
+            HELP=1              ;;
+        -o)
+            ORDENA=1            ;;
+        -v | --version)
+            VER=1               ;;
+        -m)
+            MAI=1               ;;
+        *)
+           echo 'Opção invalida, consulte o manual com a flag -h' && exit 1;;           
+    esac
+    shift
+done
+
+[ $HELP -eq 1 ] && echo "$MENSAGEM_USO" && exit 0
+[ $ORDENA -eq 1 ] && USUARIOS=$(echo "$USUARIOS" | sort)
+[ $VER -eq 1 ] && echo "$VERSION" && exit 0
+[ $MAI -eq 1 ] && USUARIOS=$(echo "$USUARIOS" | tr [a-z] [A-Z])
+
+echo "$USUARIOS"
