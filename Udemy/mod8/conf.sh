@@ -17,14 +17,25 @@ VERMELHO="\033[31m"
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- FUNÇÕES ----------------------------------------- #
+Parametros() {
+    local variavel="$(echo $1 | cut -d = -f 1)"
+    local valor="$(echo $1 | cut -d = -f 2)"
 
+    if [ "$variavel" = "MAIUSCULAS" ]; then
+        USAR_MAIUSCULAS="$valor"       
+    else
+        USAR_CORES="$valor"
+    fi
+}
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- EXECUÇÃO ----------------------------------------- #
 while read -r lines; do
     [ "$(echo $lines | cut -c1)" = '#' ] && continue
-    [ ! $lines ] && continue
-    echo "$lines"
+    [ ! "$lines" ] && continue
+    Parametros "$lines"
 done < $CONFIGURACAO
 
+echo "$USAR_CORES"
+echo "$USAR_MAIUSCULAS"
 # ------------------------------------------------------------------------ #
