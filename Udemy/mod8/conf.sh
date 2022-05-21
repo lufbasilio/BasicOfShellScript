@@ -21,11 +21,15 @@ Parametros() {
     local variavel="$(echo $1 | cut -d = -f 1)"
     local valor="$(echo $1 | cut -d = -f 2)"
 
-    if [ "$variavel" = "MAIUSCULAS" ]; then
-        USAR_MAIUSCULAS="$valor"       
-    else
-        USAR_CORES="$valor"
-    fi
+    case "${variavel}" in
+        MAIUSCULAS)
+            USAR_MAIUSCULAS=$valor
+        ;;
+        CORES)
+            USAR_CORES=$valor
+        ;;
+    esac
+    
 }
 # ------------------------------------------------------------------------ #
 
@@ -36,6 +40,9 @@ while read -r lines; do
     Parametros "$lines"
 done < $CONFIGURACAO
 
-echo "$USAR_CORES"
-echo "$USAR_MAIUSCULAS"
+[ $USAR_MAIUSCULAS -ne '0' ] && MSG=$(echo "$MSG" | tr a-z A-Z)
+[ $USAR_CORES -ne '0' ] && MSG=$(echo -e "${VERDE}$MSG")
+
+echo "$MSG"
+
 # ------------------------------------------------------------------------ #
