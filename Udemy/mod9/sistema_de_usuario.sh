@@ -25,6 +25,8 @@ BD="banco_de_dados.txt"
 
 VERDE="\033[32m"
 VERMELHO="\033[31m"
+
+MSG="### SITEMA DE USUARIOS ###"
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- TESTES ----------------------------------------- #
@@ -35,22 +37,37 @@ VERMELHO="\033[31m"
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- FUNÇÕES ----------------------------------------- #
- 
+
 Lista_Usuario (){
     local id=$(echo $1 | cut -d : -f 1)
     local nome=$(echo $1 | cut -d : -f 2)
     local email=$(echo $1 | cut -d : -f 3)
 
-   echo "$email"
+    echo -e "${VERDE}$id $nome - $email"
+}
+
+Valida_Usuario (){
+    grep -i -q "$1:" "$BD"
+    [ $? -eq 1 ] && echo 'Usuario não existe' || echo 'Usuario Existe'
 }
 
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- EXECUÇÃO ----------------------------------------- #
 
-while read -r linhas; do
-    [ "$(echo "$linhas" | cut -c1)" = '#' ] && continue
-    [ ! $linhas ] && continue
-    Lista_Usuario "$linhas"
-done < $BD  
+case "$1" in
+    -l)
+        while read -r linhas; do
+            [ "$(echo "$linhas" | cut -c1)" = '#' ] && continue
+            [ ! $linhas ] && continue
+            Lista_Usuario "$linhas"
+        done < $BD  
+    ;;
+    -v)
+        echo "Informe um usuario que deseja procurar"
+        read USUARIO
+        Valida_Usuario "$USUARIO"
+    ;;
+esac
+
 # ------------------------------------------------------------------------ #
