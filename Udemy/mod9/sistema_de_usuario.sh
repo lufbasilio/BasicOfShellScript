@@ -26,7 +26,7 @@ BD="banco_de_dados.txt"
 VERDE="\033[32m"
 VERMELHO="\033[31m"
 
-MSG="### SITEMA DE USUARIOS ###"
+MSG="### $(basename $0) ###"
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- TESTES ----------------------------------------- #
@@ -48,12 +48,24 @@ Lista_Usuario (){
 
 Valida_Usuario (){
     grep -i -q "$1:" "$BD"
-    [ $? -eq 1 ] && echo 'Usuario não existe' || echo 'Usuario Existe'
+#    [ $? -eq 1 ] && echo 'Usuario não existe' || echo 'Usuario Existe'
+}
+
+Insere_Usuario (){
+    local nome=$(echo "$1" | cut -d : -f 2)
+
+    if Valida_Usuario "$nome" ; then
+        echo 'Usuario ja existente'
+    else
+        echo "$*" >> "$BD"
+        echo "Usuario cadastrado com sucesso"
+    fi
 }
 
 # ------------------------------------------------------------------------ #
 
 # ------------------------------- EXECUÇÃO ----------------------------------------- #
+echo "${MSG}"
 
 case "$1" in
     -l)
@@ -68,6 +80,10 @@ case "$1" in
         read USUARIO
         Valida_Usuario "$USUARIO"
     ;;
+    -i)
+        echo "Informe um usuario que deseja inserir no seguinte formato: ID:NOME:EMAIL"
+        read USUARIO
+        Insere_Usuario "$USUARIO"
+    ;;
 esac
-
 # ------------------------------------------------------------------------ #
